@@ -1,0 +1,11 @@
+Package: FastSparseGRM
+Type: Package
+Title: Calculates Sparse GRM
+Version: 0.0
+Date: 2019-01-06
+Author: Rounak Dey
+Maintainer: Rounak Dey <deyrnk@umich.edu>
+Description: Calculates Sparse GRM... very fast
+License:  GPL (>=2)
+Imports: Rcpp (>= 1.0.2), Matrix, igraph, GMMAT, SeqArray, SeqVarTools
+LinkingTo: Rcpp, RcppArmadillo

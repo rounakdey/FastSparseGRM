@@ -1,0 +1,5 @@
+useDynLib(FastSparseGRM, .registration=TRUE)
+import(Matrix, GMMAT)
+importFrom(Rcpp, evalCpp)
+importFrom(igraph, graph_from_data_frame, components)
+export("runPCA","extractUnrelated","getDivergence","calcSparseGRM","fitGWASNullModel","runScoreTestGDS")
