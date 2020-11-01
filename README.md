@@ -2,11 +2,11 @@
 Efficiently calculate ancestry-adjusted sparse GRM
 
 ## Example pipeline
-Step 1. Run KING (version >=2.1.6)
+Step 1. Run KING (version >=2.1.6) - KING suggests not using pruned SNPs
 
     king -b <bedfile> --ibdseg --degree 4 --cpus <n_cpus> --prefix <output.king>
 
-Step 2. Get ancestry divergence estimates
+Step 2. Get ancestry divergence estimates - From this step onwards, one can use pruned SNPs to save computation costs
 
     R CMD BATCH --vanilla '--args --prefix.in <prefix.bedfile> --file.seg <output.king> --num_threads <n_cpus> --degree 4 --nRandomSNPs 0 --prefix.out <output.divergence>' getDivergence_wrapper.R getDivergence.Rout
 
