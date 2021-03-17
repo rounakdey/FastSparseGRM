@@ -1,15 +1,23 @@
-#Step 1: Run KING (version >=2.1.6)
-king -b <bedfile> --ibdseg --degree 4 --cpus <n_cpus> --prefix <output.king>
+#There are two ways of running FastSparseGRM
 
-#Step 2: Get ancestry divergence estimates
+#Option 1: Run the pipeline step-by-step. This gives the user more control over memory and CPU usage in each step. This option is suggested for analyzing very large dataset.
+##Step 1: Run KING (version >=2.1.6)
+king -b <unfiltered.bedfile> --ibdseg --degree 4 --cpus <n_cpus> --prefix <output.king>
+
+##Step 2: Get ancestry divergence estimates
 R CMD BATCH --vanilla '--args --prefix.in <prefix.bedfile> --file.seg <output.king> --num_threads <n_cpus> --degree 4 --nRandomSNPs 0 --prefix.out <output.divergence>' getDivergence_wrapper.R getDivergence.Rout
 
-#Step 3: Extract unrelated samples
+##Step 3: Extract unrelated samples
 R CMD BATCH --vanilla '--args --prefix.in <prefix.bedfile> --file.seg <output.king> --degree 4 --file.div <output.divergence> --prefix.out <output.unrelated>' extractUnrelated_wrapper.R extractUnrelated.Rout
 
-#Step 4: Run PCA
-R  CMD BATCH --vanilla '--args --prefix.in <prefix.bedfile> --file.unrels <output.unrelated> --prefix.out <output.pca> --no_pcs 20 --num_threads 30' runPCA_wrapper.R runPCA.Rout
+##Step 4: Run PCA
+R  CMD BATCH --vanilla '--args --prefix.in <prefix.bedfile> --file.unrels <output.unrelated> --prefix.out <output.pca> --no_pcs 20 --num_threads <n_cpus>' runPCA_wrapper.R runPCA.Rout
 
-#Step 5: Calculate Sparse GRM
-R CMD BATCH --vanilla '--args --prefix.in <prefix.bedfile> --prefix.out <output.sparseGRM> --file.train <output.unrelated> --file.score <output.pca.score> --file.seg <output.king> --block.size 50000 --num_threads 30 --no_pcs 20' calcSparseGRM_wrapper.R calcSparseGRM.Rout
+##Step 5: Calculate Sparse GRM
+R CMD BATCH --vanilla '--args --prefix.in <prefix.bedfile> --prefix.out <output.sparseGRM> --file.train <output.unrelated> --file.score <output.pca.score> --file.seg <output.king> --num_threads <n_cpus> --no_pcs 20' calcSparseGRM_wrapper.R calcSparseGRM.Rout
 
+#Option 2: Run the entire pipeline with one wrapper function. Have to specify the same memory and CPU threads for all the steps. Not suggested for very large dataset.
+R CMD BATCH --vanilla '--args --prefix.in <prefix.bedfile> --prefix.in.unfiltered <prefix.unfiltered.bedfile> --prefix.out <output.sparseGRM> --KING.executable <king.executable.path> --degree 4 --num_threads <n_cpus> --no_pcs 20' runPipeline_wrapper.R runPipeline.Rout
+#prefix.bedfile is the prefix of the bedfile used for calculating PC scores and Sparse GRM. This file can be pruned and MAF filtered.
+#prefix.unfiltered.bedfile is the prefix of the bedfile used for running KING IBD segment analysis. No MAF filtering or pruning is required (and suggested as well) for this file.
+#If you want to use the same file for both bedfile and unfiltered.bedfile, just specify prefix.bedfile and keep prefix.unfiltered.bedfile blank.
