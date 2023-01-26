@@ -44,7 +44,7 @@ To convert from SeqArray GDS format, the GDS file must have the following nodes:
 
 Here, the chromosome-specific BED files are `chr1.bed`, `chr2.bed`, ... and the merged BED output is `chrall.bed`.
 
-**Next, some of the steps in the FastSparseGRM pipeline requires pruned genotypes.** It is okay to use unpruned genotypes there, but that will result in substantially high computation cost. Here is an example script of how to perform pruning on *bash* using *plink*,
+**Next, some of the steps in the FastSparseGRM pipeline requires pruned genotypes.** It is okay to use unpruned genotypes there, but that will result in substantially high computation cost. We suggest to keep around 200,000 variants in the pruned genotype file to be used in the pipeline, tweak the `--indep-pairwise` parameter accordingly. Here is an example script of how to perform pruning on *bash* using *plink*,
 
     plink --bfile chrall --indep-pairwise 50 5 0.1 --out chrall.prunedlist;
     plink --bfile chrall --extract chrall.prunedlist.prune.in --make-bed --out chrall_pruned
