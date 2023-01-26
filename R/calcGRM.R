@@ -1,4 +1,4 @@
-calcSparseGRM<-function(prefix.in,file.score,file.train,file.seg,no_pcs=10,num_threads=0,prefix.out,degree=4,block.size=5000,max.related.block=5000)
+calcSparseGRM<-function(prefix.in,file.score,file.train,file.seg,no_pcs=10,num_threads=0,prefix.out,degree=4,block.size=5000,max.related.block=5000,KINGformat.out=FALSE)
 {
 options(stringsAsFactors=F)
 
@@ -79,13 +79,13 @@ beta<-postmultiply(nullmat,in.train)
 Kinship<-matrix(0,nrow(kin0),2)
 rep=0
 repeat{
-beginInd=rep*block.size
-endInd=min((rep+1)*block.size,p)
-print(c(beginInd,endInd))
-Kinship_now=calcRel(beginInd, endInd, beta[beginInd:(endInd-1)+1,], X, match(kin0$ID1,famIDs)-1, match(kin0$ID2,famIDs)-1)
-Kinship=Kinship+Kinship_now
-rep=rep+1
-if(endInd==p) break
+	beginInd=rep*block.size
+	endInd=min((rep+1)*block.size,p)
+	print(c(beginInd,endInd))
+	Kinship_now=calcRel(beginInd, endInd, beta[beginInd:(endInd-1)+1,], X, match(kin0$ID1,famIDs)-1, match(kin0$ID2,famIDs)-1)
+	Kinship=Kinship+Kinship_now
+	rep=rep+1
+	if(endInd==p) break
 }
 Kinship=Kinship[,1]/Kinship[,2]
 
@@ -100,23 +100,21 @@ colnames(kin0)<-c("ID1","ID2","Kinship")
 kin0noself<-kin0[-c(1:nrow(kinself)),]
 kin1<-kin0noself[which(kin0noself$Kinship>=2^-(degree+1.5)),]
 
-degree.reset=0
 newthresh=2^-(degree+1.5)
 repeat{
-gr<-igraph::graph_from_data_frame(kin1)
-comp <- igraph::components(gr)
-mem <- comp$membership
-maxblock.kin<-max(comp$csize)
-if(maxblock.kin>max.related.block)
-{
-	kin1<-kin1[-which(kin1$Kinship==min(kin1$Kinship)),]
-	newthresh<-min(kin1$Kinship)
-} else {
-	break
+	gr<-igraph::graph_from_data_frame(kin1)
+	comp <- igraph::components(gr)
+	mem <- comp$membership
+	maxblock.kin<-max(comp$csize)
+	if(maxblock.kin>max.related.block)
+	{
+		newthresh<-max(newthresh*(2^0.01),min(kin1$Kinship))
+		kin1<-kin1[-which(kin1$Kinship<=newthresh),]
+		print(paste0("Maximum related block size (",maxblock.kin,") too large, sparsity threshold modified to ",newthresh))
+	} else {
+		break
+	}
 }
-degree.reset=1
-}
-if(degree.reset==1) print(paste0("Maximum related block size too large, sparsity threshold modified to ",min(kin1$Kinship)))
 
 if(maxblock.seg>max.related.block)
 {
@@ -147,13 +145,13 @@ if(maxblock.seg>max.related.block)
 	Kinship<-matrix(0,nrow(kin1),2)
 	rep=0
 	repeat{
-	beginInd=rep*block.size
-	endInd=min((rep+1)*block.size,p)
-	print(c(beginInd,endInd))
-	Kinship_now=calcRel(beginInd, endInd, beta[beginInd:(endInd-1)+1,], X, match(kin1$ID1,famIDs)-1, match(kin1$ID2,famIDs)-1)
-	Kinship=Kinship+Kinship_now
-	rep=rep+1
-	if(endInd==p) break
+		beginInd=rep*block.size
+		endInd=min((rep+1)*block.size,p)
+		print(c(beginInd,endInd))
+		Kinship_now=calcRel(beginInd, endInd, beta[beginInd:(endInd-1)+1,], X, match(kin1$ID1,famIDs)-1, match(kin1$ID2,famIDs)-1)
+		Kinship=Kinship+Kinship_now
+		rep=rep+1
+		if(endInd==p) break
 	}
 	Kinship=Kinship[,1]/Kinship[,2]
 
@@ -208,22 +206,29 @@ print(paste("Sparse GRM calculation completed at",Sys.time()))
 
 save(sGRM,file=paste(prefix.out,".sGRM.RData",sep=""))
 
-#Save Kinships in KING format
-kin0<-kin0[-which(kin0$ID1==kin0$ID2),]
-kinID1<-fam[match(kin0$ID1,famIDs),1:2]
-kinID2<-fam[match(kin0$ID2,famIDs),1:2]
-InfType<-rep("UN",nrow(kin0))
-InfType[which(kin0$Kinship>=2^-5.5 & kin0$Kinship<2^-4.5)]<-"4th"
-InfType[which(kin0$Kinship>=2^-4.5 & kin0$Kinship<2^-3.5)]<-"3rd"
-InfType[which(kin0$Kinship>=2^-3.5 & kin0$Kinship<2^-2.5)]<-"2nd"
-InfType[which(kin0$Kinship>=2^-2.5 & kin0$Kinship<2^-1.5)]<-"1st"
-InfType[which(kin0$Kinship>=2^-1.5)]<-"Dup/MZ"
+if(KINGformat.out==TRUE)
+{
+	#Save Kinships in KING format
+	kin0<-kin0[-which(kin0$ID1==kin0$ID2),]
+	kinID1<-fam[match(kin0$ID1,famIDs),1:2]
+	kinID2<-fam[match(kin0$ID2,famIDs),1:2]
+	InfType<-rep("UN",nrow(kin0))
+	InfType[which(kin0$Kinship>=2^-5.5 & kin0$Kinship<2^-4.5)]<-"4th"
+	InfType[which(kin0$Kinship>=2^-4.5 & kin0$Kinship<2^-3.5)]<-"3rd"
+	InfType[which(kin0$Kinship>=2^-3.5 & kin0$Kinship<2^-2.5)]<-"2nd"
+	InfType[which(kin0$Kinship>=2^-2.5 & kin0$Kinship<2^-1.5)]<-"1st"
+	InfType[which(kin0$Kinship>=2^-1.5)]<-"Dup/MZ"
 
-kin0<-cbind(kinID1,kinID2,kin0$Kinship,InfType)
-colnames(kin0)<-c("FID1","ID1","FID2","ID2","Kinship","InfType")
-write.table(kin0,paste(prefix.out,".kins",sep=""),row.names=F,col.names=T,quote=F)
+	kin0<-cbind(kinID1,kinID2,kin0$Kinship,InfType)
+	colnames(kin0)<-c("FID1","ID1","FID2","ID2","Kinship","InfType")
+	write.table(kin0,paste(prefix.out,".kins",sep=""),row.names=F,col.names=T,quote=F)
+}
+print(paste("Saved output files at",Sys.time()))
+
 deletedata()
+print("Cleared Memory 1")
 deletetranspose()
+print(paste("Cleared all memory blocks at",Sys.time()))
 
 }
 

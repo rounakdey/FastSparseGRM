@@ -1,7 +1,5 @@
 library('optparse')
-
 options(stringsAsFactors=F)
-
 
 option_list <- list(
   make_option("--prefix.in", type="character", default="",
@@ -32,4 +30,5 @@ prefix.out <- opt$prefix.out
 file.include <- opt$file.include
 
 library('FastSparseGRM')
+print(sessionInfo())
 extractUnrelated(file.seg,file.div,prefix.in,degree,file.include,prefix.out)

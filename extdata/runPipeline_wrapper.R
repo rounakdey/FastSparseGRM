@@ -1,5 +1,4 @@
 library('optparse')
-
 options(stringsAsFactors=F)
 
 
@@ -62,6 +61,7 @@ prefix.out <- opt$prefix.out
 getPCadjSparseGRM<-function(prefix.in,prefix.in.unfiltered,KING.executable,num_threads,degree,divThresh,nRandomSNPs,file.include,no_pcs,no_iter,block.size,max.related.block,tempDir,deleteTemp,prefix.out)
 {
 	library('FastSparseGRM')
+	print(sessionInfo())
 
 	if(prefix.in.unfiltered=="")	prefix.in.unfiltered<-prefix.in
 	if(tempDir=="")	tempDir<-tempdir()

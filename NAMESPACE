@@ -1,5 +1,5 @@
 useDynLib(FastSparseGRM, .registration=TRUE)
-import(Matrix, GMMAT)
+import(Matrix, GMMAT, gdsfmt, SNPRelate, SeqArray, SeqVarTools)
 importFrom(Rcpp, evalCpp)
 importFrom(igraph, graph_from_data_frame, components)
-export("runPCA","extractUnrelated","getDivergence","calcSparseGRM","fitGWASNullModel","runScoreTestGDS")
+export("runPCA","extractUnrelated","getDivergence","calcSparseGRM","fitGWASNullModel","runScoreTestGDS","Seq2SNP_wFilter","SNP2BED_wFilter")

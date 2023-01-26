@@ -128,7 +128,7 @@ selectUnrel <- function(kin0,div,iids,id.include)
 extractUnrelated<-function(file.seg,file.div,prefix.in,degree=4,file.include,prefix.out)
 {
 
-fam <- read.table(paste0(prefix.in,".fam"),sep=" ",header=F)
+fam <- read.table(paste0(prefix.in,".fam"),header=F)
 colnames(fam)<-c("FID","IID","PID","MID","Sex","Pheno")
 
 if(file.include!="")
@@ -143,9 +143,9 @@ print("Extracting the set of unrelated samples")
 kin0 <- read.table(file.seg, header = TRUE)
 kin0<-removeHigherDegree(kin0,degree)
 div <- read.table(file.div, header = FALSE)
-colnames(div)<-c("ID","Div")
+colnames(div)<-c("FID","ID","Div")
 
-unrel_set <- selectUnrel(kin0,div,fam$IID,id.include)
+unrel_set <- selectUnrel(kin0,div[,c("ID","Div")],fam$IID,id.include[,2])
 
 unrel_set<-fam[which(fam$IID %in% unrel_set),c("FID","IID")]
 write.table(unrel_set,paste0(prefix.out,".unrels"),sep=" ",col.names=F,row.names=F,quote=F)

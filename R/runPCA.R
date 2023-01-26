@@ -83,7 +83,7 @@ runPCA<-function(prefix.in,file.unrels,no_pcs=20,num_threads,prefix.out,no_iter=
 if(file.unrels=="")
 {
 	print("No file.unrels provides. All samples are considered unrelated")
-	unrels <- read.table(paste0(prefix.in,".fam"),sep=" ",header=F)
+	unrels <- read.table(paste0(prefix.in,".fam"),header=F)
 	unrel_ids<-paste0(unrels[,1],"_",unrels[,2])
 } else {
 	unrels <- read.table(file.unrels,sep=" ",header=F)

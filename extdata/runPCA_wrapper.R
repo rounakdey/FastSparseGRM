@@ -1,7 +1,5 @@
 library('optparse')
-
 options(stringsAsFactors=F)
-
 
 option_list <- list(
   make_option("--prefix.in", type="character", default="",
@@ -33,4 +31,5 @@ prefix.out <- opt$prefix.out
 no_iter <- opt$no_iter
 
 library('FastSparseGRM')
+print(sessionInfo())
 runPCA(prefix.in,file.unrels,no_pcs,num_threads,prefix.out,no_iter)

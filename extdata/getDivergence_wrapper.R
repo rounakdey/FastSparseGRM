@@ -1,5 +1,4 @@
 library('optparse')
-
 options(stringsAsFactors=F)
 
 
@@ -35,5 +34,6 @@ nRandomSNPs <- opt$nRandomSNPs
 prefix.out <- opt$prefix.out
 
 library('FastSparseGRM')
+print(sessionInfo())
 getDivergence(file.seg,prefix.in,num_threads,divThresh,degree,nRandomSNPs,prefix.out)
 

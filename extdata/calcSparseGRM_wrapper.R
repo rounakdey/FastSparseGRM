@@ -1,7 +1,5 @@
 library('optparse')
-
 options(stringsAsFactors=F)
-
 
 option_list <- list(
   make_option("--prefix.in", type="character", default="",
@@ -20,6 +18,8 @@ option_list <- list(
     help="SNP block size to load in memory"),
   make_option("--max.related.block", type="integer", default=5000,
     help="Maximum allowed size of a related sample block"),
+  make_option("--KINGformat.out", type="logical", default=FALSE,
+    help="Output sparse GRM estimates in KING format"),
   make_option("--degree", type="integer", default=4,
     help="Estimate kinships for samples related up to which degree (max 4, default 4)"),
   make_option("--prefix.out", type="character", default="",
@@ -42,9 +42,11 @@ no_pcs <- opt$no_pcs
 prefix.out <- opt$prefix.out
 degree <- opt$degree
 max.related.block <- opt$max.related.block
+KINGformat.out <- opt$KINGformat.out
 
 library('FastSparseGRM')
-calcSparseGRM(prefix.in,file.score,file.train,file.seg,no_pcs,num_threads,prefix.out,degree,block.size,max.related.block)
+print(sessionInfo())
+calcSparseGRM(prefix.in,file.score,file.train,file.seg,no_pcs,num_threads,prefix.out,degree,block.size,max.related.block,KINGformat.out)
 
 
 
