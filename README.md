@@ -1,5 +1,5 @@
 # FastSparseGRM
-FastSparseGRM (current version 1.0) is an R package that efficiently calculates genetic principal components (PCs) and the ancestry-adjusted sparse genetic relatedness matrix (GRM). It accounts for population heterogeneity using genetic PCs which are automatically calculated as part of the pipeline. The genetic PCs can be used as fixed effect covariates to account for the population stratification and the sparse GRM can be used to model the random effects to account for the sample relatedness in a mixed effects phenotype-genotype association testing model.
+FastSparseGRM is an R package that efficiently calculates genetic principal components (PCs) and the ancestry-adjusted sparse genetic relatedness matrix (GRM). It accounts for population heterogeneity using genetic PCs which are automatically calculated as part of the pipeline. The genetic PCs can be used as fixed effect covariates to account for the population stratification and the sparse GRM can be used to model the random effects to account for the sample relatedness in a mixed effects phenotype-genotype association testing model.
 
 FastSparseGRM utilizes multithreading for efficient computation and can benefit greatly from using a large number of CPU cores.
    
