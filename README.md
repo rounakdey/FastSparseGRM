@@ -80,7 +80,7 @@ Step 5. Calculate Sparse GRM
 ### Option 2. Run the entire pipeline with one wrapper function.
 The user has to specify the same memory and CPU threads for all the steps, and this option does not have the option to fine-tune every step of the computation. **This option is intended for smaller sample size, and is not suggested for very large dataset.**
 
-    R CMD BATCH --vanilla '--args --prefix.in <prefix.bedfile> --prefix.in.unfiltered <prefix.unfiltered.bedfile> --prefix.out <output.sparseGRM> --KING.executable <king.executable.path: default king> --degree <degree: default 4> --num_threads <n_cpus> --no_pcs <no_pcs: default 20>' runPipeline_wrapper.R runPipeline.Rout
+    R CMD BATCH --vanilla '--args --prefix.in <prefix.bedfile> --prefix.in.unfiltered <prefix.unfiltered.bedfile> --prefix.out <output.sparseGRM> --KING.executable <king.executable.path: default king> --degree <degree: default 4> --num_threads <n_cpus> --divThresh <divThresh: default -0.02209709> --nRandomSNPs <nRandomSNPs: default 0> --file.include <file.include: default ""> --no_pcs <no_pcs: default 20> --no_iter <no_iter: default 10> --block.size <block.size: default 5000> --max.related.block <max.related.block: default 5000> --tempDir <tempDir: default /tmp> --deleteTemp <deleteTemp: default TRUE> --KINGformat.out <KINGformat.out: default FALSE>' runPipeline_wrapper.R runPipeline.Rout
 
 ### Details about the arguments
 + `prefix.bedfile`: Prefix of the BED file used for calculating ancestry divergences, PC scores and the Sparse GRM. This file can be pruned and MAF filtered (suggested to use MAF > 0.05 and LD pruned variants). Around 200,000 variants are good enough for this input.
@@ -96,5 +96,7 @@ The user has to specify the same memory and CPU threads for all the steps, and t
 + `block.size`: Size of the SNP blocks to read at-a-time when calculation the sparse GRM. This is to control the memory usage. Larger block size utilizes more memory, but results in faster computation. Default is 5000.
 + `max.related.block`: Maximum size of a related family block. The sparsity threshold will be adjusted accordingly. Default is 5000.
 + `KINGformat.out`: Whether to output the entries of the sparse GRM in KING format (FID1 ID1 FID2 ID2 Kinship). Default is FALSE.
++ `tempDir`: Address of the temporary directory to store the intermediate outputs. Default is the global temporary directory /tmp or /var/tmp.
++ `deleteTemp`: Whether to delete the temporary intermediate files. Default is TRUE.
 + `output.king` (\*.seg)/`output.divergence` (\*.div)/`output.unrelated` (\*.unrels)/`output.pca` (\*.score): Intermediate outputs for each of the steps.
 + `output.sparseGRM`: Prefix of the final sparse GRM output file. The output will be in \*.RData format. If `KINGformat.out` is TRUE, then it will also output the results in KING format in a \*.kins file.

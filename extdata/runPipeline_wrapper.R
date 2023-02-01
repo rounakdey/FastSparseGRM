@@ -31,6 +31,8 @@ option_list <- list(
     help="Directory to store intermediate files. If not provided, then default temporary directory of the system will be used."),
   make_option("--deleteTemp", type="logical", default=TRUE,
     help="Whether to delete the temporary files or not."),
+  make_option("--KINGformat.out", type="logical", default=FALSE,
+    help="Output sparse GRM estimates in KING format"),
   make_option("--prefix.out", type="character", default="",
     help="Prefix to the output file")
 )
@@ -55,10 +57,11 @@ block.size <- opt$block.size
 max.related.block <- opt$max.related.block
 tempDir <- opt$tempDir
 deleteTemp <- opt$deleteTemp
+KINGformat.out <- opt$KINGformat.out
 prefix.out <- opt$prefix.out
 
 
-getPCadjSparseGRM<-function(prefix.in,prefix.in.unfiltered,KING.executable,num_threads,degree,divThresh,nRandomSNPs,file.include,no_pcs,no_iter,block.size,max.related.block,tempDir,deleteTemp,prefix.out)
+getPCadjSparseGRM<-function(prefix.in,prefix.in.unfiltered,KING.executable,num_threads,degree,divThresh,nRandomSNPs,file.include,no_pcs,no_iter,block.size,max.related.block,tempDir,deleteTemp,KINGformat.out,prefix.out)
 {
 	library('FastSparseGRM')
 	print(sessionInfo())
@@ -81,7 +84,7 @@ getPCadjSparseGRM<-function(prefix.in,prefix.in.unfiltered,KING.executable,num_t
 	runPCA(prefix.in,file.unrels=paste0(prefix.temp.out,".unrels"),no_pcs,num_threads,prefix.out,no_iter)
 
 	print("Calculating Sparse GRM")
-	calcSparseGRM(prefix.in,file.score=paste0(prefix.out,".score"),file.train=paste0(prefix.temp.out,".unrels"),file.seg=paste0(prefix.temp.out,".seg"),no_pcs,num_threads,prefix.out,degree,block.size,max.related.block)
+	calcSparseGRM(prefix.in,file.score=paste0(prefix.out,".score"),file.train=paste0(prefix.temp.out,".unrels"),file.seg=paste0(prefix.temp.out,".seg"),no_pcs,num_threads,prefix.out,degree,block.size,max.related.block,KINGformat.out)
 
 	if(deleteTemp==TRUE)
 	{
@@ -93,5 +96,5 @@ getPCadjSparseGRM<-function(prefix.in,prefix.in.unfiltered,KING.executable,num_t
 }
 
 
-getPCadjSparseGRM(prefix.in,prefix.in.unfiltered,KING.executable,num_threads,degree,divThresh,nRandomSNPs,file.include,no_pcs,no_iter,block.size,max.related.block,tempDir,deleteTemp,prefix.out)
+getPCadjSparseGRM(prefix.in,prefix.in.unfiltered,KING.executable,num_threads,degree,divThresh,nRandomSNPs,file.include,no_pcs,no_iter,block.size,max.related.block,tempDir,deleteTemp,KINGformat.out,prefix.out)
 
