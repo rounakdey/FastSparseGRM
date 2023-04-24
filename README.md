@@ -1,5 +1,5 @@
 # FastSparseGRM
-FastSparseGRM is an R package that efficiently calculates genetic principal components (PCs) and the ancestry-adjusted sparse genetic relatedness matrix (GRM). It accounts for population heterogeneity using genetic PCs which are automatically calculated as part of the pipeline. The genetic PCs can be used as fixed effect covariates to account for the population stratification and the sparse GRM can be used to model the random effects to account for the sample relatedness in a mixed effects phenotype-genotype association testing model.
+FastSparseGRM is an R package that efficiently calculates genetic principal components (PCs) and the ancestry-adjusted sparse genetic relatedness matrix (GRM). It accounts for population heterogeneity using genetic PCs which are automatically calculated as part of the pipeline. The genetic PCs can be used as fixed effect covariates to account for the population stratification and the sparse GRM can be used to model the random effects to account for the sample-relatedness in a mixed effects phenotype-genotype association testing model.
 
 FastSparseGRM utilizes multithreading for efficient computation and can benefit greatly from using a large number of CPU cores.
    
@@ -72,13 +72,14 @@ Step 3. Extract unrelated samples
 Step 4. Run PCA
 
     R  CMD BATCH --vanilla '--args --prefix.in <prefix.bedfile> --file.unrels <output.unrelated> --prefix.out <output.pca> --no_pcs <no_pcs: default 20> --num_threads <n_cpus> --no_iter <no_iter: default 10>' runPCA_wrapper.R runPCA.Rout
+**If there is a variant present in the BED file that is monomorphic in the unrelated samples, then the PCA step will throw an error. We suggest using some MAC or MAF-based filtering on the BED file before running this PCA step. Keeping only common variants (MAF > 0.01, or 0.05 for smaller sample-size) in the BED file is recommended.**
 
 Step 5. Calculate Sparse GRM
 
     R CMD BATCH --vanilla '--args --prefix.in <prefix.bedfile> --prefix.out <output.sparseGRM> --file.train <output.unrelated> --file.score <output.pca> --file.seg <output.king> --num_threads <n_cpus> --no_pcs <no_pcs: default 20> --block.size <block.size: default 5000> --max.related.block <max.related.block: default 5000> --KINGformat.out <KINGformat.out: default FALSE> --degree <degree: default 4>' calcSparseGRM_wrapper.R calcSparseGRM.Rout
 
 ### Option 2. Run the entire pipeline with one wrapper function.
-The user has to specify the same memory and CPU threads for all the steps, and this option does not have the option to fine-tune every step of the computation. **This option is intended for smaller sample size, and is not suggested for very large dataset.**
+The user has to specify the same memory and CPU threads for all the steps, and this option does not have the option to fine-tune every step of the computation. **This option is intended for smaller sample-size, and is not suggested for very large dataset.**
 
     R CMD BATCH --vanilla '--args --prefix.in <prefix.bedfile> --prefix.in.unfiltered <prefix.unfiltered.bedfile> --prefix.out <output.sparseGRM> --KING.executable <king.executable.path: default king> --degree <degree: default 4> --num_threads <n_cpus> --divThresh <divThresh: default -0.02209709> --nRandomSNPs <nRandomSNPs: default 0> --file.include <file.include: default ""> --no_pcs <no_pcs: default 20> --no_iter <no_iter: default 10> --block.size <block.size: default 5000> --max.related.block <max.related.block: default 5000> --tempDir <tempDir: default /tmp> --deleteTemp <deleteTemp: default TRUE> --KINGformat.out <KINGformat.out: default FALSE>' runPipeline_wrapper.R runPipeline.Rout
 
