@@ -2,7 +2,16 @@
 FastSparseGRM is an R package that efficiently calculates genetic principal components (PCs) and the ancestry-adjusted sparse genetic relatedness matrix (GRM). It accounts for population heterogeneity using genetic PCs which are automatically calculated as part of the pipeline. The genetic PCs can be used as fixed effect covariates to account for the population stratification and the sparse GRM can be used to model the random effects to account for the sample-relatedness in a mixed effects phenotype-genotype association testing model.
 
 FastSparseGRM utilizes multithreading for efficient computation and can benefit greatly from using a large number of CPU cores.
-   
+
+## FAQ
+_Q. Why am I getting this following error when running the PCA step?_
+
+    Error in svd(H, nv = 0) : infinite or missing values in 'x'
+    Calls: runPCA -> drpca -> svd
+    Execution halted
+
+A.  This error occurs if there is any variant in the BED file that is monomorphic (MAC=0) among the unrelated set of subjects. Please make sure to use a MAF-based or MAC-based (> 5 to be safe) filtering in the BED file to avoid this error.
+
 ## How to install FastSparseGRM
 Install FastSparseGRM from source code:
 
@@ -101,3 +110,4 @@ The user has to specify the same memory and CPU threads for all the steps, and t
 + `deleteTemp`: Whether to delete the temporary intermediate files. Default is TRUE.
 + `output.king` (\*.seg)/`output.divergence` (\*.div)/`output.unrelated` (\*.unrels)/`output.pca` (\*.score): Intermediate outputs for each of the steps.
 + `output.sparseGRM`: Prefix of the final sparse GRM output file. The output will be in \*.RData format. If `KINGformat.out` is TRUE, then it will also output the results in KING format in a \*.kins file.
+   
