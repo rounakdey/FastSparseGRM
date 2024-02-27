@@ -2,12 +2,12 @@ removeHigherDegree<-function(kin0,degree)
 {
 	setUN<-which(kin0$InfType=="UN")
 	if(length(setUN)>0)	kin0<-kin0[-setUN,]
-	if(degree==3)
+	if(degree<=3)
 	{
 		set3<-which(kin0$InfType=="4th")
 		if(length(set3)>0)	kin0<-kin0[-set3,]
 	}
-	if(degree==2)
+	if(degree<=2)
 	{
 		set2<-which(kin0$InfType=="3rd")
 		if(length(set2)>0)	kin0<-kin0[-set2,]

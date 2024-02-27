@@ -1,8 +1,8 @@
 Package: FastSparseGRM
 Type: Package
 Title: Calculate Sparse Ancestry-adjusted GRM
-Version: 1.01
-Date: 2022-02-01
+Version: 1.02
+Date: 2024-02-27
 Author: Rounak Dey
 Maintainer: Rounak Dey <deyrnk@umich.edu>
 Description: Fast computation of a Sparse Ancestry-adjusted Genetic Relatedness Matrix
