@@ -134,8 +134,8 @@ void readfile(string fname, int nsamp, vector<int> RandomLags, int num_threads)
 	}
 
 	Rcout<<"Processing samples complete \n";
-	g_mu.reserve(g_nsnp);
-	g_sd.reserve(g_nsnp);
+	g_mu.resize(g_nsnp);
+	g_sd.resize(g_nsnp);
 
 }
 
